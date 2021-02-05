@@ -1,31 +1,28 @@
-//function for Creating the graphs
+//Function to create the graphs and reading the data
 function graphs(sample){
-    //Reading data
       d3.json("./data/samples.json").then (data => {
         console.log(data);
-    
-      //otu_ids
         var otu_ids = data.samples[0].otu_ids;
         console.log(`otu_ids: ${otu_ids}`);
     
-        //getting the 10 otu_ids as needed 
+        //Getting 10 otu_ids
         var otu_10 = data.samples[0].otu_ids.slice(0, 10).reverse();
         var otu_id = otu_10.map(d => "OTU " + d);
         console.log(`otu_id: ${otu_id}`);
     
-        //sample values
-        var sampleValues = data.samples[0].sample_values.slice(0,10).reverse();
-        console.log(`SampleValues: ${sampleValues}`);
+        //Values for samples
+        var Values = data.samples[0].sample_values.slice(0,10).reverse();
+        console.log(`SampleValues: ${Values}`);
     
-        //otu labels
-        var otu_labels =  data.samples[0].otu_labels.slice(0,10);
-        console.log(`OTU_labels: ${otu_labels}`);
+        //OTU labels
+        var labels =  data.samples[0].labels.slice(0,10);
+        console.log(`OTU_labels: ${labels}`);
     
-        //bar chart
+        //Code to run the Bar Chart
         var trace1 = {
-          x: sampleValues,
+          x: Values,
           y: otu_id,
-          text: otu_labels,
+          text: labels,
           type:"bar",
           orientation: "h",
         };
@@ -44,7 +41,7 @@ function graphs(sample){
         };
         Plotly.newPlot("bar", data1, layout);
     
-        //Bubble chart
+        //Code to create the bubble chart
         var trace2 = {
           x: data.samples[0].otu_ids,
           y: data.samples[0].sample_values,
@@ -53,7 +50,7 @@ function graphs(sample){
               size: data.samples[0].sample_values,
               color: data.samples[0].otu_ids
           },
-          text: data.samples[0].otu_labels
+          text: data.samples[0].labels
     
         };
         var data2 = [trace2];
@@ -69,9 +66,8 @@ function graphs(sample){
     };
     
     
-    //Working on populating the demographic info section
+    //Demographic info
     function demoInfo(sample) {
-    //Read samples.json
       d3.json("./data/samples.json").then ((data => {
         console.log(data);
     
@@ -79,16 +75,11 @@ function graphs(sample){
         var metadata = data.metadata
         console.log(metadata)
     
-        var demo = metadata.filter(item => item.id.toString() === sample)[0];
-    
-            //metadata for each person
-        //var person = demo[0]
-        //console.log(`Person: ${person}`)
-    
-        var demo_info = d3.select("#sample-metadata") 
-        //demo_info.html("")
+        var demo = metadata.filter(item => item.id.toString() === sample)[0];    
+        var demoinfo = d3.select("#sample-metadata") 
+
         Object.entries(demo).forEach(([key, value]) => {
-          demo_info.append("h5").text(`${key}: ${value}`);
+          demoinfo.append("h5").text(`${key}: ${value}`);
         });
      }));
     }
@@ -96,10 +87,10 @@ function graphs(sample){
     //Function for event change
     function optionChanged(sample) {
       graphs(sample);
-      demoInfo(sample);
+      demo_Info(sample);
     };
     
-    //function for test subject id number 
+    //Test subject id number 
     function init() {
       var select_id = d3.select("#selDataset") 
     
@@ -111,9 +102,9 @@ function graphs(sample){
         select_id.append("option").text(name).property("value", name);
         });
       })
-     // call the functions 
+
       graphs(data.names[0]);
-      demoInfo(data.names[0]); 
+      demo_Info(data.names[0]); 
     };
     
     init();
